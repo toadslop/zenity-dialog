@@ -153,7 +153,7 @@ impl ZenityDialog {
     /// Render the dialog and wait for user response.
     pub fn show(self) -> crate::Result {
         let args = self.get_argv();
-
+        dbg!(&args);
         let output =
             Command::new("zenity")
                 .args(args)
@@ -162,7 +162,7 @@ impl ZenityDialog {
                     io::ErrorKind::NotFound => crate::error::Error::ZenityNotInstalled(err),
                     _ => crate::Error::UnexpectedIoError(err),
                 })?;
-
+        dbg!(&output);
         let stdout =
             String::from_utf8(output.stdout).map_err(crate::Error::InvalidUtf8FromStdout)?;
         let code = output.status.code().ok_or(crate::Error::MissingExitCode)?;
@@ -211,7 +211,7 @@ pub enum Application {
     /// Merely display information with an affirmative button and an optional secondary button.
     Info(InfoOptions),
     /// Display a date select dialog.
-    Calendar,
+    Calendar(CalendarOptions),
     /// Collect information from the user.
     Entry,
     /// Display an error dialog
@@ -243,10 +243,10 @@ pub enum Application {
 impl Application {
     fn get_argv(self) -> Vec<String> {
         match self {
-            Application::Calendar => vec!["--calendar".to_string()],
+            Application::Calendar(args) => args.get_argv(),
             Application::Entry => vec!["--entry".to_string()],
             Application::Error => vec!["--error".to_string()],
-            Application::Info(info_args) => info_args.get_argv(),
+            Application::Info(args) => args.get_argv(),
             Application::FileSelection => vec!["--file-selection".to_string()],
             Application::List => vec!["--list".to_string()],
             Application::Notification => vec!["--notification".to_string()],
@@ -362,5 +362,128 @@ impl InfoOptions {
         }
 
         args
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct CalendarOptions {
+    /// The body text
+    pub text: Option<String>,
+
+    /// The numeric day of the month to display as the default input. If it is larger than what is possible for the
+    /// selected month, it is ignored.
+    pub day: Option<usize>,
+
+    /// The month to display as default input
+    pub month: Option<Month>,
+
+    /// The year to display as default input
+    pub year: Option<isize>,
+
+    /// The output format for the date the user selects
+    pub format: Option<String>,
+}
+
+impl CalendarOptions {
+    /// Default implementation
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    /// Set body text
+    pub fn with_text(mut self, text: impl Into<String>) -> Self {
+        self.text = Some(text.into());
+        self
+    }
+
+    /// Set the day
+    pub fn with_day(mut self, day: impl Into<usize>) -> Self {
+        self.day = Some(day.into());
+        self
+    }
+
+    /// Set the month
+    pub fn with_month(mut self, month: impl Into<Month>) -> Self {
+        self.month = Some(month.into());
+        self
+    }
+
+    /// Set the month
+    pub fn with_year(mut self, year: impl Into<isize>) -> Self {
+        self.year = Some(year.into());
+        self
+    }
+
+    /// Set the format for the returned date.
+    /// The default depends on the user locale or be set with the strftime style.
+    /// For example %A %d/%m/%y
+    pub fn with_format(mut self, format: impl Into<String>) -> Self {
+        self.format = Some(format.into());
+        self
+    }
+
+    /// Convert to a vec of formatted argument strings
+    fn get_argv(self) -> Vec<String> {
+        let mut args = vec!["--calendar".to_string()];
+
+        if let Some(ref text) = self.text {
+            args.push(format!("--text={text}"))
+        };
+
+        if let Some(ref day) = self.day {
+            args.push(format!("--day={day}"))
+        };
+
+        if let Some(ref month) = self.month {
+            args.push(format!("--month={month}"))
+        };
+
+        if let Some(ref year) = self.year {
+            args.push(format!("--year={year}"))
+        };
+
+        if let Some(ref format) = self.format {
+            args.push(format!("--date-format={format}"))
+        };
+
+        args
+    }
+}
+
+/// Represents a calendar month for [Application::Calendar]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+pub enum Month {
+    January = 1,
+    Feburary = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12,
+}
+
+impl Display for Month {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let as_int = match self {
+            Month::January => 1,
+            Month::Feburary => 2,
+            Month::March => 3,
+            Month::April => 4,
+            Month::May => 5,
+            Month::June => 6,
+            Month::July => 7,
+            Month::August => 8,
+            Month::September => 9,
+            Month::October => 10,
+            Month::November => 11,
+            Month::December => 12,
+        };
+
+        write!(f, "{as_int}")
     }
 }
