@@ -43,7 +43,8 @@ impl ZenityDialog {
     /// Zenity returns zero when users select an afirmitive response.
     const SUCCESS_CODE: i32 = 0;
     /// Zenity returns 256 when users select a negative response.
-    const ERROR_CODE: i32 = 256;
+    const ERROR_CODE_1: i32 = 256;
+    const ERROR_CODE_2: i32 = 1;
 
     /// Construct a new Zenity instance. It expects an [Application], which determines which
     /// kind of dialog will be displayed.
@@ -169,8 +170,10 @@ impl ZenityDialog {
         let result = match (stdout.is_empty(), code) {
             (true, Self::SUCCESS_CODE) => ZenityOutput::Affirmed,
             (false, Self::SUCCESS_CODE) => ZenityOutput::AffirmedWithContent(stdout),
-            (true, Self::ERROR_CODE) => ZenityOutput::Rejected,
-            (false, Self::ERROR_CODE) => ZenityOutput::RejectedWithContent(stdout),
+            (true, Self::ERROR_CODE_1 | Self::ERROR_CODE_2) => ZenityOutput::Rejected,
+            (false, Self::ERROR_CODE_1 | Self::ERROR_CODE_2) => {
+                ZenityOutput::RejectedWithContent(stdout)
+            }
             _ => ZenityOutput::Unknown {
                 exit_code: code,
                 stdout,
