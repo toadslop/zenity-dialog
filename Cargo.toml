@@ -1,0 +1,10 @@
+[package]
+name = "zenity-dialog"
+version = "0.1.0"
+authors = ["Brian Heise <bnheise@gmail.com>"]
+description = "Provides a statically typed wrapper around the Zenity dialog rendering tool for Linux."
+keywords = ["zenity", "dialog", "linux", "wrapper"]
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+thiserror = "1.0.61"
