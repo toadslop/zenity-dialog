@@ -1,6 +1,6 @@
 [package]
 name = "zenity-dialog"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Brian Heise <bnheise@gmail.com>"]
 description = "Provides a statically typed wrapper around the Zenity dialog rendering tool for Linux."
 keywords = ["zenity", "dialog", "linux", "wrapper"]
