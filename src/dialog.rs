@@ -153,7 +153,7 @@ impl ZenityDialog {
     /// Render the dialog and wait for user response.
     pub fn show(self) -> crate::Result {
         let args = self.get_argv();
-        dbg!(&args);
+
         let output =
             Command::new("zenity")
                 .args(args)
@@ -162,7 +162,7 @@ impl ZenityDialog {
                     io::ErrorKind::NotFound => crate::error::Error::ZenityNotInstalled(err),
                     _ => crate::Error::UnexpectedIoError(err),
                 })?;
-        dbg!(&output);
+
         let stdout =
             String::from_utf8(output.stdout).map_err(crate::Error::InvalidUtf8FromStdout)?;
         let code = output.status.code().ok_or(crate::Error::MissingExitCode)?;
