@@ -299,7 +299,7 @@ where
             None => return Ok(output.into()),
         };
 
-        match content.trim() == extra_button_label {
+        match content == extra_button_label {
             true => Ok(ZenityOutputExtButton::ExtButton { content }),
             false => Ok(output.into()),
         }

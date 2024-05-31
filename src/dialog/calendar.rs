@@ -44,7 +44,7 @@ impl ZenityApplication for Calendar {
     fn parse(&self, stdout: &str) -> Result<Self::Return, crate::Error> {
         #[cfg(feature = "chrono")]
         return NaiveDate::parse_from_str(
-            stdout.trim(),
+            stdout,
             self.format.as_deref().unwrap_or(Self::DEFAULT_DATE_FORMAT),
         )
         .map_err(|err| crate::Error::ParseResultFailure(anyhow::Error::new(err)));
