@@ -11,4 +11,6 @@ pub enum Error {
     InvalidUtf8FromStdout(#[source] FromUtf8Error),
     #[error("Zenity failed to return an exit code.")]
     MissingExitCode,
+    #[error("Failed to parse the output: {0}")]
+    ParseResultFailure(#[from] anyhow::Error),
 }

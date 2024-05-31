@@ -50,6 +50,15 @@ impl From<(String, String)> for Arg {
     }
 }
 
+impl From<(&str, String)> for Arg {
+    fn from(value: (&str, String)) -> Self {
+        Self {
+            name: value.0.into(),
+            value: Some(value.1),
+        }
+    }
+}
+
 impl From<(&str, &str)> for Arg {
     fn from(value: (&str, &str)) -> Self {
         Self {

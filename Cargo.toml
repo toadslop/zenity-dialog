@@ -7,4 +7,13 @@ keywords = ["zenity", "dialog", "linux", "wrapper"]
 license = "MIT OR Apache-2.0"
 
 [dependencies]
+anyhow = "1.0.86"
+chrono = { version = "0.4.38", default-features = false, features = [
+    "std",
+    "alloc",
+], optional = true }
 thiserror = "1.0.61"
+
+[features]
+default = []
+chrono = ["dep:chrono"]
