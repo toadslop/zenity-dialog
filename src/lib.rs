@@ -25,5 +25,7 @@ pub use crate::dialog::Icon;
 pub use crate::dialog::Info;
 pub use crate::dialog::Month;
 pub use crate::dialog::ZenityDialog;
+pub use crate::dialog::ZenityDialogExtButton;
 pub use crate::dialog::ZenityOutput;
+pub use crate::dialog::ZenityOutputExtButton;
 pub use crate::error::Error;
