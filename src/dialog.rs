@@ -6,9 +6,14 @@ mod info;
 
 use crate::Arg;
 pub use dialog::application::ZenityApplication;
+
+#[cfg(feature = "calendar")]
 pub use dialog::calendar::{Calendar, Month};
+#[cfg(feature = "entry")]
 pub use dialog::entry::Entry;
+#[cfg(feature = "error")]
 pub use dialog::error::Error;
+#[cfg(feature = "info")]
 pub use dialog::info::Info;
 use std::{fmt::Display, io, path::PathBuf, process::Command, time::Duration};
 
