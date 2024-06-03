@@ -3,6 +3,26 @@
 //! A thin wrapper arround Zenity, a tool for rendering dialog boxes in Linux.
 //! This mvp version supports only a limitted number of Zenity options.
 //!
+//! ## Usage
+//!
+//! ```
+//! let result = ZenityDialog::new(dialog::Error::default().with_text("An error happened!"))
+//! .with_icon(Icon::Error)
+//! .show()?;
+//!
+//! match result {
+//! ZenityOutput::Affirmed { .. } => {
+//!     println!("The user clicked the affirmative response")
+//! }
+//! ZenityOutput::Rejected { .. } => println!("The user clicked the rejection response"),
+//! ZenityOutput::Unknown {
+//!     exit_code,
+//!     stdout,
+//!     stderr,
+//! } => println!("Something weird happened. {exit_code} {stdout} {stderr}"),
+//! };
+//! ```
+//!
 //! ## Features
 //!
 //! ### Chrono
