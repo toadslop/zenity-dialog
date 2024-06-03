@@ -1,17 +1,17 @@
 use super::{application::ToArgVector, ZenityApplication};
 
-/// Settings for a dialog with a single text input.
+/// Configuration for a dialog that warns the user of an error.
 #[derive(Debug, Clone, Default)]
-pub struct Entry {
+pub struct Error {
     /// The body text
     pub text: Option<String>,
     /// Label for the entry
-    pub entry_text: Option<String>,
+    pub no_wrap: bool,
     /// Prevent word wrap
-    pub hide_text: bool,
+    pub no_markup: bool,
 }
 
-impl ZenityApplication for Entry {
+impl ZenityApplication for Error {
     type Return = String;
 
     fn parse(&self, stdout: &str) -> Result<Self::Return, crate::Error> {
@@ -19,26 +19,26 @@ impl ZenityApplication for Entry {
     }
 }
 
-impl ToArgVector for Entry {
+impl ToArgVector for Error {
     fn to_argv(&self) -> Vec<String> {
-        let mut args = vec!["--entry".to_string()];
+        let mut args = vec!["--error".to_string()];
         if let Some(ref text) = self.text {
             args.push(format!("--text={text}"))
         };
 
-        if let Some(ref entry_text) = self.entry_text {
-            args.push(format!("--entry-text={entry_text}"))
-        };
+        if self.no_wrap {
+            args.push("--no-wrap".to_string());
+        }
 
-        if self.hide_text {
-            args.push("--hide-text".to_string());
+        if self.no_markup {
+            args.push("--no-markup".to_string());
         }
 
         args
     }
 }
 
-impl Entry {
+impl Error {
     /// The default settings.
     pub fn new() -> Self {
         Default::default()
@@ -51,14 +51,14 @@ impl Entry {
     }
 
     /// Prefill the input with the given text.
-    pub fn with_entry_text(mut self, entry_text: impl Into<String>) -> Self {
-        self.entry_text = Some(entry_text.into());
+    pub fn set_no_wrap(mut self) -> Self {
+        self.no_wrap = true;
         self
     }
 
     /// Hide the content of the text input, as for a password input.
-    pub fn set_hide_text(mut self) -> Self {
-        self.hide_text = true;
+    pub fn set_no_markup(mut self) -> Self {
+        self.no_markup = true;
         self
     }
 }

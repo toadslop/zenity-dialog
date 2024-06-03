@@ -1,12 +1,14 @@
 mod application;
 mod calendar;
 mod entry;
+mod error;
 mod info;
 
 use crate::Arg;
 pub use dialog::application::ZenityApplication;
 pub use dialog::calendar::{Calendar, Month};
 pub use dialog::entry::Entry;
+pub use dialog::error::Error;
 pub use dialog::info::Info;
 use std::{fmt::Display, io, path::PathBuf, process::Command, time::Duration};
 
@@ -211,6 +213,7 @@ where
     }
 }
 
+/// Represents an instance of Zenity Dialog with an extra button configured.
 #[derive(Debug, Clone, Default)]
 pub struct ZenityDialogExtButton<T>
 where
@@ -277,6 +280,7 @@ where
         self
     }
 
+    /// Display the dialog and wait for user response.
     pub fn show(self) -> crate::Result<ZenityOutputExtButton<T::Return>> {
         let inner = self
             .inner
@@ -312,13 +316,29 @@ pub enum ZenityOutput<T>
 where
     T: Sized,
 {
-    /// The user clicked an affirmative, or possibly neutral button
-    Affirmed { content: Option<T> },
+    /// The user clicked the button that indicated an affirmative response
+    Affirmed {
+        /// If configured with custom text for the affirmative button, this
+        /// value will be [Some] and will contain the custom text. Otherwise,
+        /// it is [None] for default values.
+        content: Option<T>,
+    },
     /// The user clicked a button indicating rejection.
-    Rejected { content: Option<String> },
+    Rejected {
+        /// If configured with custom text for the rejection button, this
+        /// value will be [Some] and will contain the custom text. Otherwise,
+        /// it is [None] for default values.
+        content: Option<String>,
+    },
+    /// In the case that Zenity returned an unexpected response, this contains
+    /// the full details of the response so that the user may respond to it
+    /// as needed. If you get this output, it indicates a bug in this library so please report it.
     Unknown {
+        /// The returned exit code.
         exit_code: i32,
+        /// The content Zenity returned to stdout.
         stdout: String,
+        /// The content Zenity returned to stderr.
         stderr: String,
     },
 }
@@ -329,20 +349,34 @@ pub enum ZenityOutputExtButton<T>
 where
     T: Sized,
 {
-    /// The user clicked an affirmative, or possibly neutral button
+    /// The user clicked an affirmative
     Affirmed {
+        /// If configured with custom text for the affirmative button, this
+        /// value will be [Some] and will contain the custom text. Otherwise,
+        /// it is [None] for default values.
         content: Option<T>,
     },
     /// The user clicked a button indicating rejection.
     Rejected {
+        /// If configured with custom text for the rejection button, this
+        /// value will be [Some] and will contain the custom text. Otherwise,
+        /// it is [None] for default values.
         content: Option<String>,
     },
+    /// If configured with an extra button, this indicates that the user clicked that button.
     ExtButton {
+        /// The content of the extra button.
         content: String,
     },
+    /// In the case that Zenity returned an unexpected response, this contains
+    /// the full details of the response so that the user may respond to it
+    /// as needed. If you get this output, it indicates a bug in this library so please report it.
     Unknown {
+        /// The returned exit code.
         exit_code: i32,
+        /// The content Zenity returned to stdout.
         stdout: String,
+        /// The content Zenity returned to stderr.
         stderr: String,
     },
 }
@@ -369,10 +403,15 @@ impl<T> From<ZenityOutput<T>> for ZenityOutputExtButton<T> {
 /// standard icons, while [Icon::IconPath] allows you to pass the path of a custom icon.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Icon {
+    /// An error icon
     Error,
+    /// An info icon
     Info,
+    /// A question icon
     Question,
+    /// A warning icon
     Warning,
+    /// A path to a custom icon
     IconPath(PathBuf),
 }
 

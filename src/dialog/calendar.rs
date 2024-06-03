@@ -3,7 +3,10 @@ use super::{application::ToArgVector, ZenityApplication};
 use chrono::NaiveDate;
 use std::fmt::{Debug, Display};
 
-#[derive(Default, Clone)]
+/// Settings for a dialog that displays a calendar for date selection.
+/// With feature "chrono" enabled, the output will be automatically
+/// parsed into a NaiveDate.
+#[derive(Debug, Default, Clone)]
 pub struct Calendar {
     /// The body text
     pub text: Option<String>,
@@ -20,19 +23,6 @@ pub struct Calendar {
 
     /// The output format for the date the user selects
     pub format: Option<String>,
-}
-
-impl Debug for Calendar {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Calendar")
-            .field("text", &self.text)
-            .field("day", &self.day)
-            .field("month", &self.month)
-            .field("year", &self.year)
-            .field("format", &self.format)
-            .field("parse_fn", &"(&str) -> String")
-            .finish()
-    }
 }
 
 impl ZenityApplication for Calendar {
@@ -129,17 +119,29 @@ impl Calendar {
 /// Represents a calendar month for [Application::Calendar]
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum Month {
+    /// January
     January = 1,
+    /// Feburary
     Feburary = 2,
+    /// March
     March = 3,
+    /// April
     April = 4,
+    /// May
     May = 5,
+    /// June
     June = 6,
+    /// July
     July = 7,
+    /// August
     August = 8,
+    /// September
     September = 9,
+    /// October
     October = 10,
+    /// November
     November = 11,
+    /// December
     December = 12,
 }
 

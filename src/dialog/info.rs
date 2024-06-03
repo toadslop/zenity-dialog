@@ -1,5 +1,6 @@
 use super::{application::ToArgVector, ZenityApplication};
 
+/// Configuration for an informational dialog.
 #[derive(Debug, Clone, Default)]
 pub struct Info {
     /// The body text
@@ -50,30 +51,36 @@ impl ToArgVector for Info {
 }
 
 impl Info {
+    /// Create a default configuration.
     pub fn new() -> Self {
         Default::default()
     }
 
+    /// Set the body text.
     pub fn with_text(mut self, text: impl Into<String>) -> Self {
         self.text = Some(text.into());
         self
     }
 
+    /// Replace the default ok button label.
     pub fn with_ok_label(mut self, ok_label: impl Into<String>) -> Self {
         self.ok_label = Some(ok_label.into());
         self
     }
 
+    /// Prevent text from wrapping.
     pub fn set_no_wrap(mut self) -> Self {
         self.no_wrap = true;
         self
     }
 
+    /// Disable markup support.
     pub fn set_no_markup(mut self) -> Self {
         self.no_markup = true;
         self
     }
 
+    /// If text is too long to fit, display an ellipses.
     pub fn set_ellipsize(mut self) -> Self {
         self.ellipsize = true;
         self
